@@ -4,6 +4,7 @@ import 'package:pinterest_clone/features/home/presentation/providers/home_provid
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pinterest_clone/features/home/presentation/widgets/home.shimmer.dart';
+import 'package:pinterest_clone/features/pin_detail/presentation/pages/pin_detail_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -31,14 +32,24 @@ class HomePage extends ConsumerWidget {
           itemCount: photos.length,
           itemBuilder: (context, index) {
             final photo = photos[index];
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: CachedNetworkImage(
-                imageUrl: photo.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Container(height: 200, color: Colors.grey.shade200),
-                fadeInDuration: const Duration(milliseconds: 300),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PinDetailPage(photo: photo),
+                  ),
+                );
+              },
+              child: Hero(
+                tag: photo.id,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CachedNetworkImage(
+                    imageUrl: photo.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             );
           },
