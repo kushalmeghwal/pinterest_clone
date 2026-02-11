@@ -6,11 +6,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pinterest_clone/features/home/presentation/widgets/home.shimmer.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/pages/pin_detail_page.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
     final photoAsync = ref.watch(homePhotosProvider);
 
     return Scaffold(
@@ -24,35 +31,43 @@ class HomePage extends ConsumerWidget {
         ),
       ),
       body: photoAsync.when(
-        data: (photos) => MasonryGridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 6,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          itemCount: photos.length,
-          itemBuilder: (context, index) {
-            final photo = photos[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PinDetailPage(photo: photo),
-                  ),
-                );
-              },
-              child: Hero(
-                tag: photo.id,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    imageUrl: photo.imageUrl,
-                    fit: BoxFit.cover,
+        data: (photos) => RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(homePhotosProvider);
+          },
+          child: MasonryGridView.count(
+            controller: _scrollController,
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 6,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+            itemCount: photos.length,
+            itemBuilder: (context, index) {
+              final photo = photos[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 400),
+                      pageBuilder: (_, _, _) => PinDetailPage(photo: photo),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: photo.id,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                      imageUrl: photo.imageUrl,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 300),
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
         loading: () => const HomeShimmer(),
         error: (e, _) => Center(child: Text("Error: $e")),

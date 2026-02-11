@@ -7,14 +7,12 @@ class HomeRemoteDataSource {
   HomeRemoteDataSource(this.dioClient);
 
   Future<List<PhotoModel>> fetchPhotos() async {
-    final response = await dioClient.dio.get("curated?page=1&per_page=60");
+    final response = await dioClient.dio.get("curated?page=1&per_page=30");
     final List photos = response.data['photos'];
+
     if (kDebugMode) {
-      for (final photo in photos) {
-        print('id : ${photo['id']}');
-        print('src/medium : ${photo['src']['medium']}');
-        print('liked : ${photo['liked']}');
-      }
+        print("Full URL: ${response.requestOptions.uri}");
+        print("Full Response: ${response.data['next_page']}");
     }
     return photos.map((e) => PhotoModel.fromJson(e)).toList();
   }
