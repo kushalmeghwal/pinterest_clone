@@ -7,8 +7,8 @@ class MyRepository implements HomeRepository {
   MyRepository(this.remoteDatasource);
 
   @override
-  Future<List<PhotoModel>> getPhotos() {
-    return remoteDatasource.fetchPhotos();
+  Future<List<PhotoModel>> getPhotos({required int page}) {
+    return remoteDatasource.fetchPhotos(page: page);
   }
 }
 
