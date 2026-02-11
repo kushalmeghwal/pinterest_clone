@@ -8,12 +8,12 @@ class HomeRemoteDataSource {
 
   Future<List<PhotoModel>> fetchPhotos({required int page}) async {
     final response = await dioClient.dio.get("curated?page=$page&per_page=30");
-    final List photos = response.data['photos'];
 
     if (kDebugMode) {
-      print("Full URL: ${response.requestOptions.uri}");
+      print("🚨  🚨Full URL: ${response.requestOptions.uri}");
       print("Full Response: ${response.data['next_page']}");
     }
+    final List photos = response.data['photos'];
     return photos.map((e) => PhotoModel.fromJson(e)).toList();
   }
 }
