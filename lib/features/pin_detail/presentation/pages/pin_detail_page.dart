@@ -46,11 +46,11 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
       context: context,
       barrierDismissible: false,
       barrierLabel: "PinOptions",
-      pageBuilder: (_, __, ___) {
+      pageBuilder: (_, _, _) {
         return PinOptionsOverlay(photo: photo);
       },
       transitionDuration: const Duration(milliseconds: 200),
-      transitionBuilder: (_, animation, __, child) {
+      transitionBuilder: (_, animation, _, child) {
         return FadeTransition(opacity: animation, child: child);
       },
     );
