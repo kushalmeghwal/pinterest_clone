@@ -21,7 +21,3 @@ class PhotoModel {
     );
   }
 }
-
-// The following assertion was thrown during performLayout():
-// BoxConstraints has a negative minimum width.
-//Another exception was thrown: Null check operator used on a null value
