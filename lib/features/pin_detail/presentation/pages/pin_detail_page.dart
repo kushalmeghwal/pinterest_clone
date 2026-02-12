@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pinterest_clone/features/home/data/models/photo_model.dart';
+import 'package:pinterest_clone/features/pin_detail/presentation/widgets/pin_options_overlay.dart';
 
 class PinDetailPage extends StatelessWidget {
   final PhotoModel photo;
@@ -13,17 +14,16 @@ class PinDetailPage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // 🔹 IMAGE SECTION
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Stack(
                   children: [
 
-                    // Image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(28),
                       child: Hero(
@@ -36,15 +36,11 @@ class PinDetailPage extends StatelessWidget {
                       ),
                     ),
 
-                    // Back Button
                     Positioned(
-                      top: 12,
-                      left: 12,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                      top: 14,
+                      left: 14,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
                         child: IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () => Navigator.pop(context),
@@ -52,10 +48,9 @@ class PinDetailPage extends StatelessWidget {
                       ),
                     ),
 
-                    // Floating Share Button
                     Positioned(
-                      bottom: 12,
-                      right: 12,
+                      bottom: 14,
+                      right: 14,
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: const Icon(Icons.send),
@@ -67,7 +62,6 @@ class PinDetailPage extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              // 🔹 ACTION ROW
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -75,18 +69,42 @@ class PinDetailPage extends StatelessWidget {
 
                     const Icon(Icons.favorite_border, size: 28),
                     const SizedBox(width: 20),
+
                     const Icon(Icons.chat_bubble_outline, size: 26),
                     const SizedBox(width: 20),
+
                     const Icon(Icons.share_outlined, size: 26),
                     const SizedBox(width: 20),
-                    const Icon(Icons.more_horiz, size: 26),
+
+                    GestureDetector(
+                      onTap: () {
+                        showGeneralDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          barrierLabel: "PinOptions",
+                          pageBuilder: (_, __, ___) {
+                            return PinOptionsOverlay(photo: photo);
+                          },
+                          transitionDuration:
+                              const Duration(milliseconds: 200),
+                          transitionBuilder:
+                              (_, animation, __, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                        );
+                      },
+                      child: const Icon(Icons.more_horiz, size: 26),
+                    ),
 
                     const Spacer(),
 
-                    // Save Button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -98,7 +116,10 @@ class PinDetailPage extends StatelessWidget {
                       onPressed: () {},
                       child: const Text(
                         "Save",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -106,8 +127,6 @@ class PinDetailPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-
-              // 🔹 CREATOR SECTION
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -126,7 +145,6 @@ class PinDetailPage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // 🔹 TITLE
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -140,7 +158,6 @@ class PinDetailPage extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              // 🔹 HASHTAG
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -154,7 +171,6 @@ class PinDetailPage extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // 🔹 CAPTION
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -164,7 +180,6 @@ class PinDetailPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
-
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -178,7 +193,6 @@ class PinDetailPage extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // 🔹 Placeholder Grid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: GridView.builder(
