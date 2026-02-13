@@ -15,29 +15,22 @@ class HomeController extends Notifier<HomeState> {
   }
 
   Future<void> loadInitial() async {
+    // if (state.isLoading) return;
+    _page = 1;
+    state = state.copyWith(isLoading: true);
+      // 🔥 clear old data first
+  // state = HomeState(
+  //   photos: [],
+  //   isLoading: true,
+  // );
 
-  _page = 1;
-  state = state.copyWith(isLoading: true);
-
-  try {
-      print("🚨 CALLING REPOSITORY");
-    final photos = await repository.getPhotos(page: _page);
-      print("🚨 PHOTOS LENGTH: ${photos.length}");
-    state = HomeState(
-      photos: photos,
-      isLoading: false,
-    );
-
-      print("🚨 STATE UPDATED");
-  } catch (e) {
-    print("🚨🚨🚨ERROR: $e");
-    state = HomeState(
-      photos: [],
-      isLoading: false,
-    );
+    try {
+      final photos = await repository.getPhotos(page: _page);
+      state = HomeState(photos: photos, isLoading: false);
+    } catch (e) {
+      state = HomeState(photos: [], isLoading: false);
+    }
   }
-}
-
 
   Future<void> loadMore() async {
     if (state.isLoading) return;

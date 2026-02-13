@@ -9,9 +9,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/pages/pin_detail_page.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/widgets/pin_options_overlay.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/recommendation_page.dart';
-import 'package:pinterest_clone/features/home/presentation/pages/search_page.dart';
-import 'package:pinterest_clone/features/home/presentation/pages/inbox_page.dart';
-import 'package:pinterest_clone/features/home/presentation/pages/user_profile_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -43,72 +40,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
+  void _scrollToTopAndRefresh() async {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    }
+
+    await ref.read(homeControllerProvider.notifier).loadInitial();
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _showCreateOverlay() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "Create",
-      transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (_, __, ___) {
-        return Material(
-          color: Colors.black.withValues(alpha: 0.4),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              /// Blur background
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(color: Colors.transparent),
-              ),
-
-              /// White Create Box
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Create",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    _createOption(Icons.image, "Pin"),
-                    _createOption(Icons.video_call, "Idea Pin"),
-                    _createOption(Icons.link, "Board"),
-
-                    const SizedBox(height: 10),
-
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Close"),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   void _openPinOptions(PhotoModel photo) {
@@ -116,61 +63,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       context: context,
       barrierDismissible: false,
       barrierLabel: "PinOptions",
-      pageBuilder: (_, __, ___) {
+      pageBuilder: (_, _, _) {
         return PinOptionsOverlay(photo: photo);
       },
       transitionDuration: const Duration(milliseconds: 200),
-      transitionBuilder: (_, animation, __, child) {
+      transitionBuilder: (_, animation, _, child) {
         return FadeTransition(opacity: animation, child: child);
       },
     );
   }
 
-  void _onBottomTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        ref.read(homeControllerProvider.notifier).loadInitial();
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const SearchPage()),
-        );
-        break;
-      case 2:
-        _showCreateOverlay();
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const InboxPage()),
-        );
-        break;
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const UserProfilePage()),
-        );
-        break;
-    }
-  }
-
-  Widget _createOption(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, size: 26),
-          const SizedBox(width: 16),
-          Text(text, style: const TextStyle(fontSize: 18)),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,10 +166,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
-                    icon: const Icon(Icons.more_horiz, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.more_horiz, size: 18),
                     onPressed: () => _openPinOptions(photo),
                   ),
                 ),
@@ -275,24 +180,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             );
           },
         ),
-      ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onBottomTap,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.black54,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: ""),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: "",
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
-        ],
       ),
     );
   }
