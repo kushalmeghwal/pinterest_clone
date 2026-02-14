@@ -6,6 +6,7 @@ import 'package:pinterest_clone/features/home/data/models/photo_model.dart';
 import 'package:pinterest_clone/features/home/presentation/providers/home_provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pinterest_clone/features/home/presentation/providers/home_refresh_notifier.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/pages/pin_detail_page.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/widgets/pin_options_overlay.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/recommendation_page.dart';
@@ -20,11 +21,11 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final ScrollController _scrollController = ScrollController();
-  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    homeRefreshNotifier.addListener(_scrollToTopAndRefresh);
 
     Future.microtask(() {
       ref.read(homeControllerProvider.notifier).loadInitial();
@@ -42,19 +43,21 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _scrollToTopAndRefresh() async {
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
+      await _scrollController.animateTo(
         0,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOut,
       );
     }
 
-    await ref.read(homeControllerProvider.notifier).loadInitial();
+    await ref.read(homeControllerProvider.notifier).loadMore(fromTop: true);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    homeRefreshNotifier.removeListener(_scrollToTopAndRefresh);
+
     super.dispose();
   }
 
@@ -72,7 +75,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +106,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
 
       body: RefreshIndicator(
+        backgroundColor: Colors.white,
+
         onRefresh: () async {
-          ref.read(homeControllerProvider.notifier).loadInitial();
+          await ref.read(homeControllerProvider.notifier).loadMore(fromTop: true);
         },
         child: MasonryGridView.builder(
           controller: _scrollController,

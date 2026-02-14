@@ -15,14 +15,8 @@ class HomeController extends Notifier<HomeState> {
   }
 
   Future<void> loadInitial() async {
-    // if (state.isLoading) return;
     _page = 1;
     state = state.copyWith(isLoading: true);
-      // 🔥 clear old data first
-  // state = HomeState(
-  //   photos: [],
-  //   isLoading: true,
-  // );
 
     try {
       final photos = await repository.getPhotos(page: _page);
@@ -32,14 +26,16 @@ class HomeController extends Notifier<HomeState> {
     }
   }
 
-  Future<void> loadMore() async {
+  Future<void> loadMore({bool fromTop = false}) async {
     if (state.isLoading) return;
     state = state.copyWith(isLoading: true);
     _page++;
 
     final newPhotos = await repository.getPhotos(page: _page);
     state = HomeState(
-      photos: [...state.photos, ...newPhotos],
+      photos: fromTop 
+      ? [...newPhotos, ...state.photos]  
+        : [...state.photos, ...newPhotos],
       isLoading: false,
     );
   }

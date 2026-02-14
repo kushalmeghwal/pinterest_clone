@@ -5,6 +5,7 @@ import 'package:pinterest_clone/features/home/presentation/pages/home_page.dart'
 import 'package:pinterest_clone/features/home/presentation/pages/search_page.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/inbox_page.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/user_profile_page.dart';
+import 'package:pinterest_clone/features/home/presentation/providers/home_refresh_notifier.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -19,23 +20,23 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = const [
     HomePage(),
     SearchPage(),
-    SizedBox(), // Create placeholder
+    SizedBox(),
     InboxPage(),
     UserProfilePage(),
   ];
 
   void _onTap(int index) {
     if (index == 2) {
-      // Later: show create overlay
       _showCreateOverlay();
       return;
     }
-
+    if (index == 0) {
+      homeRefreshNotifier.value++;
+    }
     setState(() {
       _currentIndex = index;
     });
   }
-
 
   void _showCreateOverlay() {
     showGeneralDialog(
@@ -97,7 +98,6 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     );
   }
 
-
   Widget _createOption(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -110,7 +110,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

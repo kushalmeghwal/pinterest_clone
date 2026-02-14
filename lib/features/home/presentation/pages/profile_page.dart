@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -16,11 +18,13 @@ class ProfilePage extends ConsumerStatefulWidget {
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   final ScrollController _scrollController = ScrollController();
   int _selectedTab = 0;
+  late int value;
+  final random = Random();
 
   @override
   void initState() {
     super.initState();
-
+    value = random.nextInt(30);
     Future.microtask(() {
       ref.read(homeControllerProvider.notifier).loadInitial();
     });
@@ -41,7 +45,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     _scrollController.dispose();
     super.dispose();
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(homeControllerProvider);
@@ -59,7 +63,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     Stack(
                       children: [
                         CachedNetworkImage(
-                          imageUrl: state.photos[14].imageUrl,
+                          
+                          imageUrl: state.photos[value].imageUrl,
                           width: double.infinity,
                           height: 220,
                           fit: BoxFit.cover,
@@ -102,7 +107,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             radius: 36,
                             backgroundImage: NetworkImage(
                               state.photos.length > 1
-                                  ? state.photos[15].imageUrl
+                                  ? state.photos[value+1].imageUrl
                                   : state.photos.first.imageUrl,
                             ),
                           ),
@@ -123,7 +128,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               const SizedBox(height: 4),
 
                               Text(
-                                "@${widget.photographer.toLowerCase().replaceAll(" ", "")} ${state.photos.length}",
+                                "@${widget.photographer.toLowerCase().replaceAll(" ", "")}$value",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey,
