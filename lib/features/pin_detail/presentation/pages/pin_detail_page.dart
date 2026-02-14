@@ -217,7 +217,7 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const ProfilePage(),
+                            builder: (_) => ProfilePage(photographer: widget.photo.photographer),
                           ),
                         );
                       },
