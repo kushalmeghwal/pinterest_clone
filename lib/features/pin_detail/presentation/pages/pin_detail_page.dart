@@ -1,13 +1,17 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pinterest_clone/features/home/data/models/photo_model.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/comment_page.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/profile_page.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/share_page.dart';
 import 'package:pinterest_clone/features/home/presentation/pages/user_profile_page.dart';
 import 'package:pinterest_clone/features/home/presentation/providers/home_provider.dart';
+import 'package:pinterest_clone/features/pin_detail/presentation/widgets/pin_option_sheet.dart';
 import 'package:pinterest_clone/features/pin_detail/presentation/widgets/pin_options_overlay.dart';
 
 class PinDetailPage extends ConsumerStatefulWidget {
@@ -55,6 +59,198 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
       },
     );
   }
+
+  void _showShareDialog(BuildContext context, PhotoModel photo) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "Share",
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
+      pageBuilder: (_, _, _) {
+        return Material(
+          color: Colors.black.withValues(alpha: 0.35),
+          child: Stack(
+            children: [
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(color: Colors.transparent),
+              ),
+
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 5,
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 26),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const Expanded(
+                            child: Center(
+                              child: Text(
+                                "Share Pin link",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 40),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: CachedNetworkImage(
+                          imageUrl: photo.imageUrl,
+                          height: 180,
+                          width: 180,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      Row(
+                        children: [
+                          _contactItem(photo.imageUrl, "Adam"),
+                          const SizedBox(width: 16),
+                          _contactAdd(),
+                        ],
+                      ),
+
+                      const Divider(height: 28),
+
+                      SizedBox(
+                        height: 95, // controls overall height
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          children: const [
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: FontAwesomeIcons.whatsapp,
+                                label: "WhatsApp",
+                                color: Color(0xFF25D366),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: FontAwesomeIcons.link,
+                                label: "Copy link",
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: FontAwesomeIcons.telegram,
+                                label: "Telegram",
+                                color: Color(0xFF2AABEE),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: Icons.mail,
+                                label: "Gmail",
+                                color: Colors.green,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: FontAwesomeIcons.snapchat,
+                                label: "Snapchat",
+                                color: Colors.yellow,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: SharePage(
+                                icon: Icons.more_horiz,
+                                label: "More",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _contactItem(String image, String name) {
+    return Column(
+      children: [
+        CircleAvatar(radius: 28, backgroundImage: NetworkImage(image)),
+        const SizedBox(height: 6),
+        Text(name),
+      ],
+    );
+  }
+
+  Widget _contactAdd() {
+    return Column(
+      children: const [
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: Color(0xFFE9E9E9),
+          child: Icon(Icons.person_add_alt_1),
+        ),
+        SizedBox(height: 6),
+        Text("Search"),
+      ],
+    );
+  }
+
+void _showPinOptions(BuildContext context, String photographer) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) => PinOptionsSheet(photographer: photographer),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -141,19 +337,19 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
 
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SharePage(),
-                              ),
-                            );
+                            _showShareDialog(context, widget.photo);
                           },
                           child: const Icon(Icons.share_outlined, size: 26),
                         ),
 
                         const SizedBox(width: 20),
 
-                        const Icon(Icons.more_horiz, size: 26),
+                        GestureDetector(
+                          onTap: () {
+                            _showPinOptions(context, widget.photo.photographer);
+                          },
+                          child: const Icon(Icons.more_horiz, size: 26),
+                        ),
 
                         const Spacer(),
 
@@ -217,7 +413,9 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ProfilePage(photographer: widget.photo.photographer),
+                            builder: (_) => ProfilePage(
+                              photographer: widget.photo.photographer,
+                            ),
                           ),
                         );
                       },

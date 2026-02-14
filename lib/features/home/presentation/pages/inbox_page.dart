@@ -15,7 +15,6 @@ class InboxPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              /// 🔹 HEADER
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -35,7 +34,6 @@ class InboxPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              /// 🔹 MESSAGES TITLE
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
@@ -61,7 +59,6 @@ class InboxPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              /// 🔹 PINTEREST MESSAGE
               _messageTile(
                 avatar: const CircleAvatar(
                   radius: 28,
@@ -89,7 +86,6 @@ class InboxPage extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              /// 🔹 UPDATES
               const Text(
                 "Updates",
                 style: TextStyle(
@@ -100,7 +96,6 @@ class InboxPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              /// 🔹 UPDATE CARD
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -140,7 +135,6 @@ class InboxPage extends StatelessWidget {
     );
   }
 
-  /// 🔹 MESSAGE TILE
   Widget _messageTile({
     required Widget avatar,
     required String title,
