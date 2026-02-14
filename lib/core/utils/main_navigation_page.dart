@@ -9,6 +9,15 @@ import 'package:pinterest_clone/features/home/presentation/providers/home_refres
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
+  // static void openCreateOverlay(BuildContext context) {
+  //   final state = context.findAncestorStateOfType<_MainNavigationPageState>();
+  //   state?._showCreateOverlay();
+  // }
+static void switchTab(BuildContext context, int index) {
+  final state =
+      context.findAncestorStateOfType<_MainNavigationPageState>();
+  state?._onTap(index);
+}
 
   @override
   State<MainNavigationPage> createState() => _MainNavigationPageState();
@@ -38,120 +47,115 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     });
   }
 
-void _showCreateOverlay() {
-  showGeneralDialog(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: "Create",
-    transitionDuration: const Duration(milliseconds: 250),
-    transitionBuilder: (_, animation, _, child) {
-      return SlideTransition(
-        position: Tween(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOut,
-        )),
-        child: child,
-      );
-    },
-    pageBuilder: (_, _, _) {
-      return Material(
-        color: Colors.black.withValues(alpha: 0.35),
-        child: Stack(
-          children: [
+  void _showCreateOverlay() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "Create",
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionBuilder: (_, animation, _, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
+      pageBuilder: (_, _, _) {
+        return Material(
+          color: Colors.black.withValues(alpha: 0.35),
+          child: Stack(
+            children: [
+              /// 🔹 BLUR BACKGROUND
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(color: Colors.transparent),
+              ),
 
-            /// 🔹 BLUR BACKGROUND
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(color: Colors.transparent),
-            ),
-
-            /// 🔹 BOTTOM SHEET
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 26),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(32),
+              /// 🔹 BOTTOM SHEET
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 26),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(32),
+                    ),
                   ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-
-                    /// 🔹 TOP ROW
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close, size: 26),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              "Start creating now",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      /// 🔹 TOP ROW
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 26),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const Expanded(
+                            child: Center(
+                              child: Text(
+                                "Start creating now",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 40), // balance center
-                      ],
-                    ),
+                          const SizedBox(width: 40), // balance center
+                        ],
+                      ),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    /// 🔹 OPTIONS ROW
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _createSquareOption(Icons.push_pin_outlined, "Pin"),
-                        _createSquareOption(Icons.auto_fix_high, "Collage"),
-                        _createSquareOption(Icons.dashboard_outlined, "Board"),
-                      ],
-                    ),
+                      /// 🔹 OPTIONS ROW
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _createSquareOption(Icons.push_pin_outlined, "Pin"),
+                          _createSquareOption(Icons.auto_fix_high, "Collage"),
+                          _createSquareOption(
+                            Icons.dashboard_outlined,
+                            "Board",
+                          ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 8),
-                  ],
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-Widget _createSquareOption(IconData icon, String label) {
-  return Column(
-    children: [
-      Container(
-        width: 90,
-        height: 90,
-        decoration: BoxDecoration(
-          color: const Color(0xFFE9E9E9),
-          borderRadius: BorderRadius.circular(22),
+  Widget _createSquareOption(IconData icon, String label) {
+    return Column(
+      children: [
+        Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE9E9E9),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Icon(icon, size: 34),
         ),
-        child: Icon(icon, size: 34),
-      ),
-      const SizedBox(height: 8),
-      Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

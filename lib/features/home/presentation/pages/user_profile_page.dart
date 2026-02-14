@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pinterest_clone/core/utils/main_navigation_page.dart';
+import 'package:pinterest_clone/features/home/presentation/providers/home_refresh_notifier.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -9,8 +11,14 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage> {
   int _selectedTab = 0;
-
   final List<String> tabs = ["Pins", "Boards", "Collages"];
+
+  final TextEditingController _searchController = TextEditingController();
+
+  /// 🔹 navigate to homepage
+  void _goToHomePage() {
+    MainNavigationPage.switchTab(context,0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +29,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// 🔹 TOP HEADER
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-
-                  /// Profile Circle
+                  /// ✅ PROFILE ICON (changed from "j")
                   const CircleAvatar(
                     radius: 28,
                     backgroundColor: Color(0xFF0D5C4D),
-                    child: Text(
-                      "j",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Icon(Icons.person, color: Colors.white, size: 28),
                   ),
 
                   const SizedBox(width: 24),
@@ -92,27 +91,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-
-                  /// Search Field
+                  /// ✅ Search Field (now editable)
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 48,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Row(
-                        children: const [
-                          Icon(Icons.search, color: Colors.grey),
-                          SizedBox(width: 10),
-                          Text(
-                            "Search your Pins",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
+                        children: [
+                          const Icon(Icons.search, color: Colors.grey),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: const InputDecoration(
+                                hintText: "Search your Pins",
+                                border: InputBorder.none,
+                              ),
                             ),
                           ),
                         ],
@@ -122,107 +120,77 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                   const SizedBox(width: 12),
 
-                  const Icon(Icons.add, size: 30),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            /// 🔹 FILTER CHIPS
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-
-                  /// Grid Icon
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Icon(Icons.grid_view),
+                  /// ✅ + icon calls overlay
+                  GestureDetector(
+                    onTap: () {
+                      MainNavigationPage.switchTab(context,2);
+                    },
+                    child: const Icon(Icons.add, size: 30),
                   ),
-
-                  const SizedBox(width: 12),
-
-                  _chip("Favourites", Icons.star),
-
-                  const SizedBox(width: 12),
-
-                  _chip("Created by you", null),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-            /// 🔹 SAVED IMAGES ROW
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  _previewImage(),
-                  const SizedBox(width: 10),
-                  _previewImage(),
-                  const SizedBox(width: 10),
-                  _previewImage(),
-                ],
+            /// 🔹 EMPTY STATE IMAGE (matches screenshot)
+            Center(
+              child: CircleAvatar(
+                radius: 90,
+                backgroundColor: Colors.grey.shade200,
+                backgroundImage: const NetworkImage(
+                  "https://cdn-icons-png.flaticon.com/512/2331/2331940.png",
+                ),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 30),
 
-            /// 🔹 COUNT TEXT
             const Center(
               child: Text(
-                "3 Pins saved",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                "Save what inspires you",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Center(
+                child: Text(
+                  "Saving Pins is Pinterest’s superpower.\n"
+                  "Browse Pins, save what you love, find\n"
+                  "them here to get inspired all over\nagain.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, height: 1.4),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 28),
+
+            /// ✅ Explore button → homepage
+            Center(
+              child: ElevatedButton(
+                onPressed: _goToHomePage,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 42,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  "Explore Pins",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _chip(String text, IconData? icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Row(
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 20),
-            const SizedBox(width: 8),
-          ],
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _previewImage() {
-    return Expanded(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: Image.network(
-          "https://picsum.photos/400",
-          height: 90,
-          fit: BoxFit.cover,
         ),
       ),
     );

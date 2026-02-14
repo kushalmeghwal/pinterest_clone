@@ -66,7 +66,7 @@ class _PinDetailPageState extends ConsumerState<PinDetailPage> {
       barrierDismissible: true,
       barrierLabel: "Share",
       transitionDuration: const Duration(milliseconds: 250),
-      transitionBuilder: (_, animation, __, child) {
+      transitionBuilder: (_, animation, _, child) {
         return SlideTransition(
           position: Tween(
             begin: const Offset(0, 1),
@@ -323,7 +323,7 @@ void _showPinOptions(BuildContext context, String photographer) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CommentPage(),
+                                builder: (_) => const CommentPage(photographer: '',),
                               ),
                             );
                           },

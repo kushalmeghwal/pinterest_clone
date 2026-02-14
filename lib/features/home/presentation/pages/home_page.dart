@@ -84,6 +84,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: false,
         title: const Text(
           "For you",
           style: TextStyle(
@@ -109,16 +110,18 @@ class _HomePageState extends ConsumerState<HomePage> {
         backgroundColor: Colors.white,
 
         onRefresh: () async {
-          await ref.read(homeControllerProvider.notifier).loadMore(fromTop: true);
+          await ref
+              .read(homeControllerProvider.notifier)
+              .loadMore(fromTop: true);
         },
         child: MasonryGridView.builder(
           controller: _scrollController,
           gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
           ),
-          mainAxisSpacing: 12,
+          mainAxisSpacing: 0,
           crossAxisSpacing: 6,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
           itemCount: state.photos.isEmpty ? 10 : state.photos.length + 1,
           itemBuilder: (context, index) {
             if (state.photos.isEmpty) {
@@ -138,7 +141,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             if (index == state.photos.length) {
               return state.isLoading
                   ? const Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(8),
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : const SizedBox.shrink();
@@ -148,6 +151,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -170,12 +174,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 4),
+                SizedBox(height: 0),
                 Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
                     padding: EdgeInsets.zero,
+
                     constraints: const BoxConstraints(),
+
                     icon: const Icon(Icons.more_horiz, size: 18),
                     onPressed: () => _openPinOptions(photo),
                   ),
