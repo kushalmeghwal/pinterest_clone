@@ -38,78 +38,120 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     });
   }
 
-  void _showCreateOverlay() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "Create",
-      transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (_, _, _) {
-        return Material(
-          color: Colors.black.withValues(alpha: 0.4),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(color: Colors.transparent),
-              ),
+void _showCreateOverlay() {
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: "Create",
+    transitionDuration: const Duration(milliseconds: 250),
+    transitionBuilder: (_, animation, _, child) {
+      return SlideTransition(
+        position: Tween(
+          begin: const Offset(0, 1),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        )),
+        child: child,
+      );
+    },
+    pageBuilder: (_, _, _) {
+      return Material(
+        color: Colors.black.withValues(alpha: 0.35),
+        child: Stack(
+          children: [
 
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
+            /// 🔹 BLUR BACKGROUND
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(color: Colors.transparent),
+            ),
+
+            /// 🔹 BOTTOM SHEET
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 18, 24, 26),
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(32),
+                  ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      "Create",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+
+                    /// 🔹 TOP ROW
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 26),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const Expanded(
+                          child: Center(
+                            child: Text(
+                              "Start creating now",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 40), // balance center
+                      ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
-                    _createOption(Icons.image, "Pin"),
-                    _createOption(Icons.video_call, "Idea Pin"),
-                    _createOption(Icons.link, "Board"),
-
-                    const SizedBox(height: 10),
-
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Close"),
+                    /// 🔹 OPTIONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _createSquareOption(Icons.push_pin_outlined, "Pin"),
+                        _createSquareOption(Icons.auto_fix_high, "Collage"),
+                        _createSquareOption(Icons.dashboard_outlined, "Board"),
+                      ],
                     ),
+
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
-  Widget _createOption(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, size: 26),
-          const SizedBox(width: 16),
-          Text(text, style: const TextStyle(fontSize: 18)),
-        ],
+Widget _createSquareOption(IconData icon, String label) {
+  return Column(
+    children: [
+      Container(
+        width: 90,
+        height: 90,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE9E9E9),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Icon(icon, size: 34),
       ),
-    );
-  }
+      const SizedBox(height: 8),
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ],
+  );
+}
 
   @override
   Widget build(BuildContext context) {
