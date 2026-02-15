@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pinterest_clone/core/utils/main_navigation_page.dart';
-import 'package:pinterest_clone/features/home/presentation/providers/home_refresh_notifier.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
