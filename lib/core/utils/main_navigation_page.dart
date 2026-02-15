@@ -9,10 +9,7 @@ import 'package:pinterest_clone/features/home/presentation/providers/home_refres
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
-  // static void openCreateOverlay(BuildContext context) {
-  //   final state = context.findAncestorStateOfType<_MainNavigationPageState>();
-  //   state?._showCreateOverlay();
-  // }
+  
 static void switchTab(BuildContext context, int index) {
   final state =
       context.findAncestorStateOfType<_MainNavigationPageState>();
@@ -67,13 +64,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           color: Colors.black.withValues(alpha: 0.35),
           child: Stack(
             children: [
-              /// 🔹 BLUR BACKGROUND
+           
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(color: Colors.transparent),
               ),
 
-              /// 🔹 BOTTOM SHEET
+           
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -87,7 +84,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      /// 🔹 TOP ROW
+                   
                       Row(
                         children: [
                           IconButton(
@@ -105,13 +102,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 40), // balance center
+                          const SizedBox(width: 40), 
                         ],
                       ),
 
                       const SizedBox(height: 16),
 
-                      /// 🔹 OPTIONS ROW
+    
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
